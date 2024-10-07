@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import styles from "./styles.module.css";
+import TodoItem from "./components/todo-item/TodoItem";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todoList, setTodoList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMSG, setErrorMSG] = useState(null);
+  const [todoDetails, setTodoDetails] = useState(null);
+  const [openDialog, setOpernDialog] = useState(false);
+
+  async function fetchTodoList() {
+    try {
+      setLoading(true);
+      const apiResponse = await fetch("https://dummyjson.com/todos");
+      const result = await apiResponse.json();
+      setLoading(false);
+
+      // console.log(result);
+
+      if (result?.todos && result?.todos?.length > 0) {
+        setLoading(false);
+        setTodoList(result?.todos);
+      }
+    } catch (e) {
+      console.log(e);
+      setErrorMSG("Some error");
+    }
+  }
+
+  useEffect(() => {
+    fetchTodoList();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className={styles.mainwrapper}>
+      <h1 className={styles.headerTitle}>Simple Todo App using Material UI</h1>
+      {loading ? <h3>Loadin Data, Please Wait !</h3> : null}
+      <div className={styles.todoListWrapper}>
+        {todoList && todoList.length > 0
+          ? todoList.map((todoItem) => (
+             <TodoItem todo={todoItem} />
+            ))
+          : null}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
