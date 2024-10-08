@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import TodoItem from "./components/todo-item/TodoItem";
+import TodoDetails from "./components/todo-details/TodoDetails";
 
 function App() {
   const [todoList, setTodoList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMSG, setErrorMSG] = useState(null);
   const [todoDetails, setTodoDetails] = useState(null);
-  const [openDialog, setOpernDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   async function fetchTodoList() {
     try {
@@ -28,6 +29,27 @@ function App() {
     }
   }
 
+  async function fetchDetailOfCurrentTodo(getCurrentTodoId) {
+    try {
+      const apiResponse = await fetch(
+        `https://dummyjson.com/todos/${getCurrentTodoId}`
+      );
+      const details = await apiResponse.json();
+      // console.log(details);
+      if(details){
+        setTodoDetails(details);
+        setOpenDialog(true);
+      }
+      else{
+        setOpenDialog(false);
+      }
+
+
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
     fetchTodoList();
   }, []);
@@ -39,10 +61,15 @@ function App() {
       <div className={styles.todoListWrapper}>
         {todoList && todoList.length > 0
           ? todoList.map((todoItem) => (
-             <TodoItem todo={todoItem} />
+              <TodoItem
+                key={todoItem?.id}
+                fetchDetailOfCurrentTodo={fetchDetailOfCurrentTodo}
+                todo={todoItem}
+              />
             ))
           : null}
       </div>
+      <TodoDetails setOpenDialog={setOpenDialog} openDialog={openDialog} todoDetails={todoDetails} setTodoDetails={setTodoDetails} />
     </div>
   );
 }

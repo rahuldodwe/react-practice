@@ -1,7 +1,7 @@
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 import React from "react";
 
-const TodoItem = ({ todo }) => {
+const TodoItem = ({ todo, fetchDetailOfCurrentTodo }) => {
   //    console.log(todo);
 
   return (
@@ -21,6 +21,7 @@ const TodoItem = ({ todo }) => {
         </CardContent>
         <CardActions>
           <Button
+          onClick={()=> fetchDetailOfCurrentTodo(todo?.id)}
             sx={{
               backgroundColor: "#000",
               color: "#fff",
