@@ -8,7 +8,7 @@ import { createContext, useEffect, useState } from "react";
 export const ShoppingCartContext = createContext(null);
 
 function ShoppingCartProvider({ children }) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [listOfProducts, setListOfProducts] = useState([]);
 
   async function fetchListofProducs() {
@@ -18,6 +18,7 @@ function ShoppingCartProvider({ children }) {
 
    if(result && result?.products) {
       setListOfProducts(result?.products)
+      setLoading(false);
    }
    
   } 
@@ -30,7 +31,7 @@ function ShoppingCartProvider({ children }) {
   
 
   return (
-    <ShoppingCartContext.Provider value={{ listOfProducts }} >{children}</ShoppingCartContext.Provider>
+    <ShoppingCartContext.Provider value={{ listOfProducts, loading }} >{children}</ShoppingCartContext.Provider>
   );
 }
 
